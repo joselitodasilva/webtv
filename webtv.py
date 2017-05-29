@@ -15,12 +15,12 @@ def gen2(camera):
 	for n in range(0,250):
 		sleep(0.041)
 		print "CU" + str(n)
-		frame = camera.get_all_frames(n)
+		frame = camera.get_frame_n(n)
 		yield (b'--frame\r\n'
 			b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n') 
 
 def stream(camera):
-	for frame in camera.get_all_frames:
+	for frame in camera.get_stream():
 		yield (b'--frame\r\n'
 			b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
@@ -31,8 +31,12 @@ def index():
 
 @app.route('/video_feed')
 def video_feed():
-	return Response(gen2(Camera()),
+	return Response(stream(Camera()),
 			mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/test_ts')
+def test_ts():
+	return render_template('test_ts.html')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
